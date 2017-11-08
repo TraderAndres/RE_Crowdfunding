@@ -1,0 +1,19 @@
+TODO:
+
+- Figure out a way to deal with fuzzy number / date data to clean it up consistently
+-- Work with this library "spacy" once figure out realtyshares.
+- Try getting sponsor info and put in the sponsors list & connect to prospective deals
+- Build out connection for RealtyShares or some other site.
+- move old deals onto a "closed" board
+- Fix up the platform class and make sure that plays nice with the rest of the program.
+- Make the column "platform" A list eventually as well.
+
+IN PROCESS:
+- Figure out how to input List items to AirTable.
+-- A: you HAVE to select one of the values from the list.  You can't add new ones from API apparently.
+-- I would suggest doing at least 4-5 sites, getting all the values there and then converting to a list and doing fuzzy matching going forward.
+
+SITES CONNECTED:
+- CrowdStreet
+
+
