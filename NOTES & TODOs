@@ -5,7 +5,10 @@ TODO:
 - Try getting sponsor info and put in the sponsors list & connect to prospective deals
 - Build out connection for RealtyShares or some other site.
 - move old deals onto a "closed" board
-- Fix up the platform class and make sure that plays nice with the rest of the program.
+-- I think this should probably work as follows:
+-- 1) go through all NEW deals and when find a match from existing DB, update and mark as "checked"
+-- Once finish all new deals if there are any deals in the DB which are still "unchecked" then go to those URLs and get the status
+-- For either deals found during new deal phase or later that are discovered to now be closed or on the Waitlist, move to closed "and maybe waitlist sheet"
 - Make the column "platform" A list eventually as well.
 
 IN PROCESS:
@@ -17,3 +20,5 @@ SITES CONNECTED:
 - CrowdStreet
 
 
+DONE:
+- Fix up the platform class and make sure that plays nice with the rest of the program.
