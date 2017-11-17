@@ -5,7 +5,10 @@
 # 		self.deals_url = deals_url
 # 		self.login_id = login_id
 # 		self.password = password
-
+class RECrowdfundingSite:
+    def __init__(self, deal_urls, obj):
+        self.deal_urls = deal_urls
+        self.obj = obj
 
 class Sponsor:
     def __init__(self, name, url, experience):
