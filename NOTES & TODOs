@@ -1,5 +1,7 @@
 TODO:
-
+1) - move old deals onto a "closed" board
+2) Figure out a way to get fee and waterfall structured data
+3) Connect with RealtyMogul
 - Figure out a way to deal with fuzzy number / date data to clean it up consistently
 -- Work with this library "spacy" once figure out realtyshares.
 - Try getting sponsor info and put in the sponsors list & connect to prospective deals
