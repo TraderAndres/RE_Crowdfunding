@@ -1,7 +1,9 @@
 TODO:
 1) - move old deals onto a "closed" board
+-- Basically grab all the URLs from Airtable for that platform and if any of them DON'T show up on the live deals, then assume closed.
 2) Figure out a way to get fee and waterfall structured data
 3) Connect with RealtyMogul
+4) Create auto-logins for each site
 - Figure out a way to deal with fuzzy number / date data to clean it up consistently
 -- Work with this library "spacy" once figure out realtyshares.
 - Try getting sponsor info and put in the sponsors list & connect to prospective deals
@@ -9,6 +11,9 @@ TODO:
 - move old deals onto a "closed" board
 - Fix up the platform class and make sure that plays nice with the rest of the program.
 - Make the column "platform" A list eventually as well.
+
+TO DEBUG:
+- Realtyshares images seem messed up in a few places
 
 IN PROCESS:
 - Figure out how to input List items to AirTable.

@@ -317,12 +317,29 @@ class RealtyShares:
 
 
 		# Create a Deal Object
-		deal_obj = RE_Crowdfunding.Deal(temp_title,temp_summary,'','','','','',temp_fund_size,
-										temp_target_irr,'',temp_target_equity_multiple,temp_target_investment_period,temp_target_project_level_returns,
-										temp_target_avg_cash_yield,
-										temp_investment_profile,temp_min_investment,temp_offers_due,temp_funds_due,
-										temp_property_type,temp_distribution_period,temp_distribution_commencement,
-										temp_property_closing_date,temp_purchase_price,'',temp_sponsor_coinvestment,temp_sponsor_experience,
-										'','','','','','','','',temp_property_images,temp_percent_funded)
+		deal_obj = RE_Crowdfunding.Deal(
+			title=temp_title,
+			summary=temp_summary,
+			platform_url=self.url,
+			fund_size=temp_fund_size,
+			target_irr=temp_target_irr,
+			target_equity_multiple=temp_target_equity_multiple,
+			target_investment_period=temp_target_investment_period,
+			target_project_level_returns=temp_target_project_level_returns,
+			target_avg_cash_yield=temp_target_avg_cash_yield,
+			investment_profile=temp_investment_profile,
+			min_investment=temp_min_investment,
+			offers_due=temp_offers_due,
+			funds_due=temp_funds_due,
+			property_type=temp_property_type,
+			distribution_period=temp_distribution_period,
+			distribution_commencement=temp_distribution_commencement,
+			property_closing_date=temp_property_closing_date,
+			purchase_price=temp_purchase_price,
+			sponsor_coinvestment=temp_sponsor_coinvestment,
+			sponsor_experience=temp_sponsor_experience,
+			property_images=temp_property_images,
+			percent_funded=temp_percent_funded
+		)
 
 		return deal_obj
