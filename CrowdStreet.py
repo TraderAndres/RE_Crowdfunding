@@ -80,6 +80,9 @@ class CrowdStreet:
         temp_point_of_contact = ''  # this will be a DecisionMaker type
         temp_property_images = []
 
+        # KEY DEAL POINTS
+        temp_key_deal_points = []
+
         # DEAL NUMBERS
         # Return Projections
 
@@ -103,6 +106,46 @@ class CrowdStreet:
         temp_sponsor_coinvestment = ''
         temp_sponsor_experience = ''
 
+        # THE INVESTMENT SECTION
+        # Financials Table 1
+        temp_lender = ''
+        temp_loan_amount = 0.0
+        temp_interest_rate = ''
+        temp_financials_term = ''
+        temp_financials_amortization = ''
+        temp_guaranties = ''
+        temp_prepayment_terms = ''
+        # Financials Table 2
+        temp_initial_investment = 0.0
+
+        # Sponsor Fees
+        temp_raw_sponsor_fees = ''
+
+        # Crowdstreet Marketplace Comparison
+        temp_project_target_irr = 0.0
+        temp_CS_avg_target_irr = 0.0
+        temp_project_target_equity_multiple = 0.0
+        temp_CS_avg_equity_multiple = 0.0
+        temp_project_target_hold_period = ''
+        temp_CS_avg_hold_period = ''
+        temp_project_sponsor_coinvest = 0.0
+        temp_CS_avg_coinvest = 0.0
+        temp_project_target_COC = 0.0
+        temp_CS_avg_COC = 0.0
+        temp_project_loan_to_cost_ratio = 0.0
+        temp_CS_avg_loan_to_cost_ratio = 0.0
+
+        # Project vs Investor Returns
+        temp_project_irr = 0.0
+        temp_net_investor_irr = 0.0
+        temp_irr_spread = 0.0
+        temp_project_equity_multiple = 0.0
+        temp_net_investor_equity_multiple = 0.0
+        temp_equity_multiple_spread = 0.0
+        temp_project_COC = 0.0
+        temp_net_investor_COC = 0.0
+        temp_CAC_spread = 0.0
+
         # DEBT DETAILS
         temp_debt_service_coverage_ratio = 0.0
         temp_loan_to_total_cost = 0.0
@@ -115,6 +158,9 @@ class CrowdStreet:
         temp_lp_equity = 0
         temp_senior_debt = 0
         temp_total_capital_stack = temp_gp_equity + temp_lp_equity + temp_senior_debt
+
+        # WATERFALL & FEE STRUCTURE
+
 
 
         print("Getting Deal Details for: {} ".format(deal_url))
@@ -144,6 +190,16 @@ class CrowdStreet:
                 temp_property_images.append({'url': pic})
         except:
             print("error loading image URLs")
+
+
+        # Key Deal Points (text)
+        try:
+            deal_points = self.selenium_session.get_multi_element_data("//*[@class='col-lg-12' and child::h3[text()='Key Deal Points']]//li", 'text')
+            for point in deal_points:
+                temp_key_deal_points.append({'text': point})
+        except:
+            print("error getting Key Deal Points")
+
 
         # =============================
         # SUMMARY TABLE
@@ -284,7 +340,121 @@ class CrowdStreet:
         except:
             temp_sponsor_experience
 
+        # =============================
+        # THE INVESTMENT SECTION
+        # =============================
+        # Financials
+        print('Financials Table 1...')
+        try:
+            # get the title of the 1st table
+            table1_title =self.selenium_session.get_single_xpath_text("//*[@id='investment-flows']//h4[1]")
+            print(table1_title)
+            # Lender
+            temp_lender = self.selenium_session.get_single_xpath_text("//*[@id='investment-flows']//td[preceding-sibling::td[text()='Loan Amount']]")
+            print("Lender: {}".format(temp_lender))
+            # Interest Rate
+            temp_interest_rate = self.selenium_session.get_single_xpath_text("//*[@id='investment-flows']//td[preceding-sibling::td[text()='Interest Rate']]")
+            print("Interest Rate: {}".format(temp_interest_rate))
+            # Term
+            temp_financials_term = self.selenium_session.get_single_xpath_text("//*[@id='investment-flows']//td[preceding-sibling::td[text()='Term']]")
+            print("Loan Term: {}".format(temp_financials_term))
+            # Amortization
+            temp_financials_amortization = self.selenium_session.get_single_xpath_text("//*[@id='investment-flows']//td[preceding-sibling::td[text()='Amortization']]")
+            print("Amortization: {}".format(temp_financials_amortization))
+            # Guaranties
+            temp_guaranties = self.selenium_session.get_single_xpath_text("//*[@id='investment-flows']//td[preceding-sibling::td[text()='Guaranties']]")
+            print("Guaranties: {}".format(temp_guaranties))
+            # Prepayment Terms
+            temp_prepayment_terms = self.selenium_session.get_single_xpath_text("//*[@id='investment-flows']//td[preceding-sibling::td[text()='Prepayment Terms']]")
+            print("Prepayment Terms: {}".format(temp_prepayment_terms))
+        except:
+            print('Unable to get Financials Table 1')
 
+        print('Financials Table 2...')
+        try:
+            # get the title of the 2nd table
+            table2_title =self.selenium_session.get_single_xpath_text("//*[@id='investment-flows']//h4[2]")
+            print(table2_title)
+            # Initial Investment
+            temp_lender = self.selenium_session.get_single_xpath_text("")
+            print("Lender: {}".format(temp_lender))
+            # Interest Rate
+        except:
+            print('Unable to get Financials Table 2')
+
+
+        # Sponsor Fees
+        print('Sponsor Fees...')
+        try:
+            # Raw Sponsor Fees
+            fee_lines = self.selenium_session.get_multi_element_data("//*[@id='investment-fees']//li", 'text')
+            for fee in fee_lines:
+                temp_raw_sponsor_fees += fee + '\n'
+                print("Raw Sponsor Fees: {}".format(temp_raw_sponsor_fees))
+        except:
+            print('Unable to get Sponsor Fees')
+
+        # Crowdstreet Marketplace Comparison
+        print('Crowdstreet Marketplace Comparison numbers...')
+        try:
+            # Target IRRs
+            temp_project_target_irr = self.selenium_session.get_single_xpath_text("//*[@id='investment-MPcomp']//td[preceding-sibling::td[text()='Targeted Investor IRR']][1]")
+            print("Project Target IRR: {}".format(temp_project_target_irr))
+            temp_CS_avg_target_irr = self.selenium_session.get_single_xpath_text("//*[@id='investment-MPcomp']//td[preceding-sibling::td[text()='Targeted Investor IRR']][2]")
+            print("Crowdstreet Average IRR: {}".format(temp_CS_avg_target_irr))
+            # Target Equity Multiples
+            temp_project_target_equity_multiple = self.selenium_session.get_single_xpath_text("//*[@id='investment-MPcomp']//td[preceding-sibling::td[text()='Targeted Equity Multiple']][1]")
+            print("Project Target Equity Multiple: {}".format(temp_project_target_equity_multiple))
+            temp_CS_avg_equity_multiple = self.selenium_session.get_single_xpath_text("//*[@id='investment-MPcomp']//td[preceding-sibling::td[text()='Targeted Equity Multiple']][2]")
+            print("Crowdstreet Average Equity Multiple: {}".format(temp_CS_avg_equity_multiple))
+            # Target Investment Hold Period
+            temp_project_target_hold_period = self.selenium_session.get_single_xpath_text("//*[@id='investment-MPcomp']//td[preceding-sibling::td[text()='Targeted Investment Hold Period']][1]")
+            print("Project Target Hold Period: {}".format(temp_project_target_hold_period))
+            temp_CS_avg_hold_period = self.selenium_session.get_single_xpath_text("//*[@id='investment-MPcomp']//td[preceding-sibling::td[text()='Targeted Investment Hold Period']][2]")
+            print("Crowdstreet Average Hold Period: {}".format(temp_CS_avg_hold_period))
+            # Sponsor co-invest
+            temp_project_sponsor_coinvest = self.selenium_session.get_single_xpath_text("//*[@id='investment-MPcomp']//td[preceding-sibling::td[text()='Sponsor Co-Invest']][1]")
+            print("Project Sponsor Co-Invest: {}".format(temp_project_sponsor_coinvest))
+            temp_CS_avg_coinvest = self.selenium_session.get_single_xpath_text("//*[@id='investment-MPcomp']//td[preceding-sibling::td[text()='Sponsor Co-Invest']][2]")
+            print("Crowdstreet Average Co-Invest: {}".format(temp_CS_avg_coinvest))
+            # Targeted Cash on Cash return
+            temp_project_target_COC = self.selenium_session.get_single_xpath_text("//*[@id='investment-MPcomp']//td[preceding-sibling::td[text()='Targeted Average Annual Cash-On-Cash Return']][1]")
+            print("Project Target Cash-on-Cash Return: {}".format(temp_project_target_COC))
+            temp_CS_avg_COC = self.selenium_session.get_single_xpath_text("//*[@id='investment-MPcomp']//td[preceding-sibling::td[text()='Targeted Average Annual Cash-On-Cash Return']][2]")
+            print("Crowdstreet Average Cash-on-Cash Return: {}".format(temp_CS_avg_COC))
+            # Loan-to-Cost (LTC) Ratio
+            temp_project_loan_to_cost_ratio = self.selenium_session.get_single_xpath_text("//*[@id='investment-MPcomp']//td[preceding-sibling::td[text()='Loan-To-Cost (LTC) Ratio']][1]")
+            print("Project Loan to Cost Ratio: {}".format(temp_project_loan_to_cost_ratio))
+            temp_CS_avg_loan_to_cost_ratio = self.selenium_session.get_single_xpath_text("//*[@id='investment-MPcomp']//td[preceding-sibling::td[text()='Loan-To-Cost (LTC) Ratio']][2]")
+            print("Crowdstreet Average Loan to Cost Ratio: {}".format(temp_CS_avg_loan_to_cost_ratio))
+        except:
+            print('Unable to get Crowdstreet Marketplace Comparison')
+
+        # Project vs Investor Returns
+        try:
+            # IRRs
+            temp_project_irr = self.selenium_session.get_single_xpath_text("//*[@id='investment-project']//td[preceding-sibling::th[text()='IRR']][1]")
+            print("Project IRR: {}".format(temp_project_irr))
+            temp_net_investor_irr = self.selenium_session.get_single_xpath_text("//*[@id='investment-project']//td[preceding-sibling::th[text()='IRR']][2]")
+            print("Net Investor IRR: {}".format(temp_net_investor_irr))
+            temp_irr_spread = self.selenium_session.get_single_xpath_text("//*[@id='investment-project']//td[preceding-sibling::th[text()='IRR']][3]")
+            print("IRR Spread: {}".format(temp_irr_spread))
+            # Equity Multiples
+            temp_project_equity_multiple = self.selenium_session.get_single_xpath_text("//*[@id='investment-project']//td[preceding-sibling::th[text()='Equity Multiple']][1]")
+            print("Project Equity Multiple: {}".format(temp_project_equity_multiple))
+            temp_net_investor_equity_multiple = self.selenium_session.get_single_xpath_text("//*[@id='investment-project']//td[preceding-sibling::th[text()='Equity Multiple']][2]")
+            print("Net Investor Equity Multiple: {}".format(temp_net_investor_equity_multiple))
+            temp_equity_multiple_spread = self.selenium_session.get_single_xpath_text("//*[@id='investment-project']//td[preceding-sibling::th[text()='Equity Multiple']][3]")
+            print("Equity Multiple Spread: {}".format(temp_equity_multiple_spread))
+            # CAC
+            temp_project_COC = self.selenium_session.get_single_xpath_text("//*[@id='investment-project']//td[preceding-sibling::th[text()='Cash on Cash']][1]")
+            print("Project Cash on Cash: {}".format(temp_project_COC))
+            temp_net_investor_COC = self.selenium_session.get_single_xpath_text("//*[@id='investment-project']//td[preceding-sibling::th[text()='Cash on Cash']][2]")
+            print("Net Investor Cash on Cash: {}".format(temp_net_investor_COC))
+            temp_CAC_spread = self.selenium_session.get_single_xpath_text("//*[@id='investment-project']//td[preceding-sibling::th[text()='Cash on Cash']][3]")
+            print("Cash on Cash Spread: {}".format(temp_CAC_spread))
+        except:
+            print('Unable to get Project vs Investor Returns')
 
 
 

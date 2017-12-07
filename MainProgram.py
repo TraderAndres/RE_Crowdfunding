@@ -7,8 +7,11 @@ import time
 import Input_Output
 import airtable
 
-
-
+# TIME TRACKING
+# 11-29-17 Start 10:17
+# 11-29-17 End 11:27
+# 12-1-17: Start 9:24
+# 12-1-17: End 10:15
 
 
 if __name__ == "__main__":
