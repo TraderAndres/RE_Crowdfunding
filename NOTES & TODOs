@@ -1,8 +1,14 @@
 TODO:
+- (DOING) Add "Summary of Terms" on crowdstreet since might have details of distribution there.
+- (DONE-TESTING) iF finds a deal on teh closed list that is OPEN, move it back.
+- CS - Make a separate field for Summary of terms. This is useful because if there is no waterfall table, then go to raw text like in here: https://app.crowdstreet.com/properties/medalist-diversified-reit/
+- Switch to BitBucket then use login info automatically
+
+
+
 1) - move old deals onto a "closed" board
 -- Basically grab all the URLs from Airtable for that platform and if any of them DON'T show up on the live deals, then assume closed.
 2) Figure out a way to get fee and waterfall structured data
-3) Connect with RealtyMogul
 4) Create auto-logins for each site
 - Figure out a way to deal with fuzzy number / date data to clean it up consistently
 -- Work with this library "spacy" once figure out realtyshares.
@@ -24,3 +30,26 @@ SITES CONNECTED:
 - CrowdStreet
 
 
+REFERENCE:
+XPath Examples
+- Child example
+-- //*[@class='col-lg-12' and child::h3[text()='Key Deal Points']]//li
+- Parent example
+-- //*[contains(text(),'Learn More')]/parent::a
+- Sibling Example
+-- //*[text()='EQUITY CONTRIBUTION']/parent::tr/following-sibling::tr
+--
+- Translate  (For upper & lowercase comparisons)
+-- translate('some text','abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+- Contains (for non-exact matching)
+-- '//dt[contains(text(),'Engine')]'
+- Case-insensitive xPaths
+-- A: use translate('some text','abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+-- A: https://stackoverflow.com/questions/1625446/problem-with-upper-case-and-lower-case-xpath-functions-in-selenium-ide/1625859#1625859
+- All nodes BETWEEN nodes
+-- $ns1[count(.|$ns2) = count($ns2)]
+-- https://stackoverflow.com/questions/3835601/how-would-you-find-all-nodes-between-two-h3s-using-xpath
+
+
+DONE:
+- Research an intelligent page scraper for python (no hours charged).  Diffbot seems best but expensive

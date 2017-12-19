@@ -1,17 +1,14 @@
 import RE_Crowdfunding
 import Utilities
 import CrowdStreet
+import CrowdStreet_TestPage
 import RealtyShares
 import browse
 import time
 import Input_Output
 import airtable
+import pprint
 
-# TIME TRACKING
-# 11-29-17 Start 10:17
-# 11-29-17 End 11:27
-# 12-1-17: Start 9:24
-# 12-1-17: End 10:15
 
 
 if __name__ == "__main__":
@@ -32,7 +29,7 @@ if __name__ == "__main__":
 	airtable_closed_deals_obj = airtable.Airtable("app8veAxXaYiCGhO3", "Closed Deals",api_key="keyrVOeTWn2XwESXT")
 	# airtable_sponsors_obj = airtable.Airtable("app8veAxXaYiCGhO3", "Sponsors", api_key="keyrVOeTWn2XwESXT")
 
-	# Testing
+	# START TESTING
 	# record = airtable_prospective_deals_obj.match('Deal URL', 'https://www.realtyshares.com/investments/slate-apartments')]
 	# airtable_record = record['fields']
 	# pics_attaches = airtable_record.pop('Pictures & Attachments', None)
@@ -52,6 +49,11 @@ if __name__ == "__main__":
 	# all_site_deal_urls = []
 	all_site_deals = []
 
+	# # TESTING:
+	# TEST_crowdstreet_obj = CrowdStreet_TestPage.TEST_CrowdStreet(selenium_session)
+	# TEST_crowdstreet_obj.TEST_get_deal_details(
+	# 	'file:///C:/Users/andre/Documents/MEGA/Work/Pacific%20West%20Land/Python%20Scripts/Test%20Pages/CrowdStreet-%20Multifamily1.html')
+
 	# RealtyShares
 	realtyshares_obj = RealtyShares.RealtyShares(selenium_session)
 	realtyshares_obj.login()
@@ -60,14 +62,14 @@ if __name__ == "__main__":
 	realtyshares_existing_deal_urls = [ item['fields']['Deal URL'] for item in realtyshares_records ]
 	all_site_deals.append(RE_Crowdfunding.RECrowdfundingSite(realtyshares_new_deal_urls, realtyshares_existing_deal_urls, realtyshares_obj))
 
-	# Crowdstreet
-	crowdstreet_obj = CrowdStreet.CrowdStreet(selenium_session)
-	crowdstreet_obj.login()
-	crowdstreet_new_deal_urls = crowdstreet_obj.get_current_offering_urls()
-	crowdstreet_records = airtable_prospective_deals_obj.search('Platform', crowdstreet_obj.url)
-	crowdstreet_existing_deal_urls = [item['fields']['Deal URL'] for item in realtyshares_records]
-	all_site_deals.append(RE_Crowdfunding.RECrowdfundingSite(crowdstreet_new_deal_urls, crowdstreet_existing_deal_urls, crowdstreet_obj))
-	# all_site_deal_urls.extend(crowdstreet_obj.get_current_offering_urls())
+	# # Crowdstreet
+	# crowdstreet_obj = CrowdStreet.CrowdStreet(selenium_session)
+	# crowdstreet_obj.login()
+	# crowdstreet_new_deal_urls = crowdstreet_obj.get_current_offering_urls()
+	# crowdstreet_records = airtable_prospective_deals_obj.search('Platform', crowdstreet_obj.url)
+	# crowdstreet_existing_deal_urls = [item['fields']['Deal URL'] for item in crowdstreet_records]
+	# all_site_deals.append(RE_Crowdfunding.RECrowdfundingSite(crowdstreet_new_deal_urls, crowdstreet_existing_deal_urls, crowdstreet_obj))
+	# # all_site_deal_urls.extend(crowdstreet_obj.get_current_offering_urls())
 
 	# once have additional sites would do something lik
 
@@ -99,9 +101,16 @@ if __name__ == "__main__":
 				'Purchase Price': deal_detail.purchase_price,
 				'Percent Funded': deal_detail.percent_funded,
 				'Sponsor Co-Investment': deal_detail.sponsor_coinvestment,
-				'Platform': deal_detail.platform_url
+				'Platform': deal_detail.platform_url,
 				# 'Sponsor Experience': deal_detail.sponsor_experience
+				# INVESTMENT
+				# Summary
+				'Waterfall Distribution': deal_detail.temp_waterfall_distribution,
+				# Sponsor Fees
+				'Sponsor Fees': deal_detail.raw_sponsor_fees
 			}
+			# For help with debugging
+			pprint.pprint(airtable_record)
 
 			# See if the record is already in the DB
 			record = airtable_prospective_deals_obj.match('Deal URL', deal_url)
@@ -116,13 +125,18 @@ if __name__ == "__main__":
 			else:
 				# If not add to the DB
 				airtable_prospective_deals_obj.insert(airtable_record)
+				# Check to see if the record is mistakenly in the Closed Deals table and delete if so
+				closed_record = airtable_closed_deals_obj.match('Deal URL', deal_url)
+				if len(closed_record) > 0:
+					# Delete the record from the Closed Deals Table.
+					airtable_closed_deals_obj.delete(closed_record['id'])
 
 			# IO_obj.append_output_file(deal_detail)
 			# temp_deal_details.append(deal_detail)
 			time.sleep(Utilities.rand_int_with_occassional_big_int(5,30,115))
 
 
-		# Now that found all new deals for THIS SIDE and categorized old deals,
+		# Now that found all new deals for THIS SITE and categorized old deals,
 		# go through all existing_deal_urls and move any where live=False
 		for item in site.existing_deal_urls:
 			# if live = False, then move to "Closed Deals" Table

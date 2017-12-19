@@ -3,7 +3,7 @@ import time
 import RE_Crowdfunding
 import datetime
 
-class CrowdStreet:
+class TEST_CrowdStreet:
 	def __init__(self, selenium_session, name="CrowdStreet", login_id='', password='', url="https://www.crowdstreet.com",
 				 login_url="https://app.crowdstreet.com/accounts/login",
 				 current_offerings_url = "https://app.crowdstreet.com/properties/#"):
@@ -20,49 +20,11 @@ class CrowdStreet:
 		#TODO: This should eventually load existing deals from "database" - will need to create an input under __init__
 		self.current_deals = []
 
-	def login(self):
-		# Load login page.
-		self.selenium_session.load_page(self.login_url)
-		# allow enough time to log in manually
-		seconds = 10
-		print("Alloting {} seconds to log in".format(seconds))
-		while seconds > 0:
-			print("{} seconds left".format(seconds))
-			time.sleep(1)
-			seconds -= 1
 
-	def get_current_offering_urls(self):
+	def TEST_get_deal_details(self, deal_url):
 		# This function just goes through the page and puts all the URLs into an array
 		# Load current offerings page.
-		self.selenium_session.load_page(self.current_offerings_url)
-		print("Getting current offering URLs for {} ".format(self.name))
-		current_offerings_urls = []
-
-		try:
-			current_offerings_urls = self.selenium_session.get_multi_element_data(
-				"//*[contains(text(),'Learn More')]/parent::a", "href")
-
-			# this converts the list to a set and back to a list.
-			# Purpose is that set can only have distinct objects so this removes dupes
-			current_offerings_urls = list(set(current_offerings_urls))
-
-		except:
-			current_offerings_urls = None
-
-		print("Found a total of {} URLs".format(len(current_offerings_urls)))
-
-		return current_offerings_urls
-
-	def get_funded_offering_urls(self):
-		# This function just goes through the page and puts all the URLs into an array
-		# Load current offerings page.
-		self.selenium_session.load_page(self.current_offerings_url)
-
-
-	def get_deal_details(self, deal_url):
-		# This function just goes through the page and puts all the URLs into an array
-		# Load current offerings page.
-		self.selenium_session.load_page(deal_url)
+		self.selenium_session.load_page(deal_url, use_sleep=False)
 
 		# Create Temp Variables to store data
 		# HEADER INFO
@@ -179,182 +141,180 @@ class CrowdStreet:
 
 		print("Getting Deal Details for: {} ".format(deal_url))
 
-
-		# =============================
-		# HEADER
-		# =============================
-		# Title
-		try:
-			temp_title = self.selenium_session.get_single_xpath_text("//*[@class ='detail-title']/h2")
-			print("Title: {}".format(temp_title))
-		except:
-			temp_title = None
-
-		# Summary Text
-		try:
-			temp_summary = self.selenium_session.get_single_xpath_text("//*[@class='detail-title']/p/i")
-			print("Summary: {}".format(temp_summary))
-		except:
-			temp_summary = None
-
-		# Property images (pictures)
-		try:
-			pics = self.selenium_session.get_multi_element_data("//*[@id='header_detail_fader']/img", 'src')
-			for pic in pics:
-				temp_property_images.append({'url': pic})
-		except:
-			print("error loading image URLs")
-
-
-		# Key Deal Points (text)
-		try:
-			deal_points = self.selenium_session.get_multi_element_data("//*[@class='col-lg-12' and child::h3[text()='Key Deal Points']]//li", 'text')
-			for point in deal_points:
-				temp_key_deal_points.append({'text': point})
-		except:
-			print("error getting Key Deal Points")
-
-
-		# =============================
-		# SUMMARY TABLE
-		# =============================
-		# Targeted Investor IRR
-		try:
-			temp_target_irr = self.selenium_session.get_single_xpath_text(
-				"//*[@class='summary-table']//td[preceding-sibling::td/strong='Targeted Investor IRR:']")
-			print("Target IRR: {}".format(temp_target_irr))
-		except:
-			temp_target_irr = None
-
-		# Fund Size
-		try:
-			temp_fund_size = self.selenium_session.get_single_xpath_text(
-				"//*[@class='summary-table']//td[preceding-sibling::td/strong='Fund Size:']")
-			print("Target Fund Size: {}".format(temp_fund_size))
-		except:
-			temp_fund_size = None
-
-		# Target Equity Multiple
-		try:
-			temp_target_equity_multiple = self.selenium_session.get_single_xpath_text(
-				"//*[@class='summary-table']//td[preceding-sibling::td/strong='Targeted Equity Multiple:']")
-			print("Target Equity Multiple: {}".format(temp_target_equity_multiple))
-		except:
-			temp_target_equity_multiple = None
-
-		# Target Investment Period
-		try:
-			temp_target_investment_period = self.selenium_session.get_single_xpath_text(
-				"//*[@class='summary-table']//td[preceding-sibling::td/strong='Targeted Investment Period:']")
-			print("Target Investment Period: {}".format(temp_target_investment_period))
-		except:
-			temp_target_investment_period = None
-
-		# Investment Profile
-		try:
-			temp_investment_profile = self.selenium_session.get_single_xpath_text(
-				"//*[@class='summary-table']//td[preceding-sibling::td/strong='Investment Profile:']")
-			print("Investment Profile: {}".format(temp_investment_profile))
-		except:
-			temp_investment_profile = None
-
-		# Minimum Investment
-		try:
-			temp_min_investment = float(self.selenium_session.get_single_xpath_text(
-				"//*[@class='summary-table']//td[preceding-sibling::td/strong='Minimum Investment:']"))
-			# Ensure it's a number if want to make into currency on Airtable (not very important)
-
-			print("Min Investment: {}".format(temp_min_investment))
-		except:
-			temp_min_investment = None
-
-		# Target Project Level IRR (temp_target_project_level_returns)
-		try:
-			temp_target_project_level_returns = self.selenium_session.get_single_xpath_text(
-				"//*[@class='summary-table']//td[preceding-sibling::td/strong='Targeted Project Level IRR:']")
-			print("Target Project Level Returns: {}".format(temp_target_project_level_returns))
-		except:
-			temp_target_project_level_returns = None
-
-		# Targeted average cash yield
-		try:
-			temp_target_avg_cash_yield = self.selenium_session.get_single_xpath_text(
-				"//*[@class='summary-table']//td[preceding-sibling::td/strong='Targeted Average Cash Yield:']")
-			print("Target Average Cash Yield: {}".format(temp_target_avg_cash_yield))
-		except:
-			temp_target_avg_cash_yield = None
-
-		# Property Type
-		try:
-			temp_property_type = self.selenium_session.get_single_xpath_text(
-				"//*[@class='summary-table']//td[preceding-sibling::td/strong='Property Type:']")
-			print("Property Type: {}".format(temp_property_type))
-		except:
-			temp_property_type = None
-
-		# Offers Due
-		try:
-			temp_offers_due = self.selenium_session.get_single_xpath_text(
-				"//*[@class='summary-table']//td[preceding-sibling::td/strong='Offers Due:']")
-			print("Funds Due: {}".format(temp_offers_due))
-		except:
-			temp_offers_due = None
-
-		# Funds Due
-		try:
-			temp_funds_due = self.selenium_session.get_single_xpath_text(
-				"//*[@class='summary-table']//td[preceding-sibling::td/strong='Funds Due:']")
-			print("Funds Due: {}".format(temp_funds_due))
-		except:
-			temp_funds_due = None
-
-		# Distribution Period
-		try:
-			temp_distribution_period = self.selenium_session.get_single_xpath_text(
-				"//*[@class='summary-table']//td[preceding-sibling::td/strong='Distribution Period:']")
-			print("Distribution Period: {}".format(temp_distribution_period))
-		except:
-			temp_distribution_period = None
-
-		# Distribution Commencement
-		try:
-			temp_distribution_commencement = self.selenium_session.get_single_xpath_text(
-				"//*[@class='summary-table']//td[preceding-sibling::td/strong='Distribution Commencement:']")
-			print("Distribution Commencement: {}".format(temp_distribution_commencement))
-		except:
-			temp_distribution_commencement = None
-
-		# Property Closing Date
-		try:
-			temp_property_closing_date = self.selenium_session.get_single_xpath_text(
-				"//*[@class='summary-table']//td[preceding-sibling::td/strong='Property Closing Date:']")
-			print("Property Closing date: {}".format(temp_property_closing_date))
-		except:
-			temp_property_closing_date = None
-
-		# Purchase Price
-		try:
-			temp_purchase_price = self.selenium_session.get_single_xpath_text(
-				"//*[@class='summary-table']//td[preceding-sibling::td/strong='Purchase Price:']")
-			print("Purchase Price: {}".format(temp_purchase_price))
-		except:
-			temp_purchase_price = None
-
-		# Sponsor Co-Investment
-		try:
-			temp_sponsor_coinvestment = self.selenium_session.get_single_xpath_text(
-				"//*[@class='summary-table']//td[preceding-sibling::td/strong='Sponsor Co-Investment:']")
-			print("Sponsor CoInvestment: {}".format(temp_sponsor_coinvestment))
-		except:
-			temp_sponsor_coinvestment = None
-
-		# Sponsor Experience
-		try:
-			temp_sponsor_experience = self.selenium_session.get_single_xpath_text(
-				"//*[contains(@class,'experience-label')]")
-			print("Sponsor Experience: {}".format(temp_sponsor_experience))
-		except:
-			temp_sponsor_experience
+		#
+		# # =============================
+		# # HEADER
+		# # =============================
+		# # Title
+		# try:
+		# 	temp_title = self.selenium_session.get_single_xpath_text("//*[@class ='detail-title']/h2")
+		# 	print("Title: {}".format(temp_title))
+		# except:
+		# 	temp_title = None
+		#
+		# # Summary Text
+		# try:
+		# 	temp_summary = self.selenium_session.get_single_xpath_text("//*[@class='detail-title']/p/i")
+		# 	print("Summary: {}".format(temp_summary))
+		# except:
+		# 	temp_summary = None
+		#
+		# # Property images (pictures)
+		# try:
+		# 	pics = self.selenium_session.get_multi_element_data("//*[@id='header_detail_fader']/img", 'src')
+		# 	for pic in pics:
+		# 		temp_property_images.append({'url': pic})
+		# except:
+		# 	print("error loading image URLs")
+		#
+		#
+		# # Key Deal Points (text)
+		# try:
+		# 	deal_points = self.selenium_session.get_multi_element_data("//*[@class='col-lg-12' and child::h3[text()='Key Deal Points']]//li", 'text')
+		# 	for point in deal_points:
+		# 		temp_key_deal_points.append({'text': point})
+		# except:
+		# 	print("error getting Key Deal Points")
+		#
+		#
+		# # =============================
+		# # SUMMARY TABLE
+		# # =============================
+		# # Targeted Investor IRR
+		# try:
+		# 	temp_target_irr = self.selenium_session.get_single_xpath_text(
+		# 		"//*[@class='summary-table']//td[preceding-sibling::td/strong='Targeted Investor IRR:']")
+		# 	print("Target IRR: {}".format(temp_target_irr))
+		# except:
+		# 	temp_target_irr = None
+		#
+		# # Fund Size
+		# try:
+		# 	temp_fund_size = self.selenium_session.get_single_xpath_text(
+		# 		"//*[@class='summary-table']//td[preceding-sibling::td/strong='Fund Size:']")
+		# 	print("Target Fund Size: {}".format(temp_fund_size))
+		# except:
+		# 	temp_fund_size = None
+		#
+		# # Target Equity Multiple
+		# try:
+		# 	temp_target_equity_multiple = self.selenium_session.get_single_xpath_text(
+		# 		"//*[@class='summary-table']//td[preceding-sibling::td/strong='Targeted Equity Multiple:']")
+		# 	print("Target Equity Multiple: {}".format(temp_target_equity_multiple))
+		# except:
+		# 	temp_target_equity_multiple = None
+		#
+		# # Target Investment Period
+		# try:
+		# 	temp_target_investment_period = self.selenium_session.get_single_xpath_text(
+		# 		"//*[@class='summary-table']//td[preceding-sibling::td/strong='Targeted Investment Period:']")
+		# 	print("Target Investment Period: {}".format(temp_target_investment_period))
+		# except:
+		# 	temp_target_investment_period = None
+		#
+		# # Investment Profile
+		# try:
+		# 	temp_investment_profile = self.selenium_session.get_single_xpath_text(
+		# 		"//*[@class='summary-table']//td[preceding-sibling::td/strong='Investment Profile:']")
+		# 	print("Investment Profile: {}".format(temp_investment_profile))
+		# except:
+		# 	temp_investment_profile = None
+		#
+		# # Minimum Investment
+		# try:
+		# 	temp_min_investment = float(self.selenium_session.get_single_xpath_text(
+		# 		"//*[@class='summary-table']//td[preceding-sibling::td/strong='Minimum Investment:']"))
+		# 	print("Min Investment: {}".format(temp_min_investment))
+		# except:
+		# 	temp_min_investment = None
+		#
+		# # Target Project Level IRR (temp_target_project_level_returns)
+		# try:
+		# 	temp_target_project_level_returns = self.selenium_session.get_single_xpath_text(
+		# 		"//*[@class='summary-table']//td[preceding-sibling::td/strong='Targeted Project Level IRR:']")
+		# 	print("Min Investment: {}".format(temp_target_project_level_returns))
+		# except:
+		# 	temp_target_project_level_returns = None
+		#
+		# # Targeted average cash yield
+		# try:
+		# 	temp_target_avg_cash_yield = self.selenium_session.get_single_xpath_text(
+		# 		"//*[@class='summary-table']//td[preceding-sibling::td/strong='Targeted Average Cash Yield:']")
+		# 	print("Min Investment: {}".format(temp_target_avg_cash_yield))
+		# except:
+		# 	temp_target_avg_cash_yield = None
+		#
+		# # Property Type
+		# try:
+		# 	temp_property_type = self.selenium_session.get_single_xpath_text(
+		# 		"//*[@class='summary-table']//td[preceding-sibling::td/strong='Property Type:']")
+		# 	print("Property Type: {}".format(temp_property_type))
+		# except:
+		# 	temp_property_type = None
+		#
+		# # Offers Due
+		# try:
+		# 	temp_offers_due = self.selenium_session.get_single_xpath_text(
+		# 		"//*[@class='summary-table']//td[preceding-sibling::td/strong='Offers Due:']")
+		# 	print("Funds Due: {}".format(temp_offers_due))
+		# except:
+		# 	temp_offers_due = None
+		#
+		# # Funds Due
+		# try:
+		# 	temp_funds_due = self.selenium_session.get_single_xpath_text(
+		# 		"//*[@class='summary-table']//td[preceding-sibling::td/strong='Funds Due:']")
+		# 	print("Funds Due: {}".format(temp_funds_due))
+		# except:
+		# 	temp_funds_due = None
+		#
+		# # Distribution Period
+		# try:
+		# 	temp_distribution_period = self.selenium_session.get_single_xpath_text(
+		# 		"//*[@class='summary-table']//td[preceding-sibling::td/strong='Distribution Period:']")
+		# 	print("Distribution Period: {}".format(temp_distribution_period))
+		# except:
+		# 	temp_distribution_period = None
+		#
+		# # Distribution Commencement
+		# try:
+		# 	temp_distribution_commencement = self.selenium_session.get_single_xpath_text(
+		# 		"//*[@class='summary-table']//td[preceding-sibling::td/strong='Distribution Commencement:']")
+		# 	print("Distribution Commencement: {}".format(temp_distribution_commencement))
+		# except:
+		# 	temp_distribution_commencement = None
+		#
+		# # Property Closing Date
+		# try:
+		# 	temp_property_closing_date = self.selenium_session.get_single_xpath_text(
+		# 		"//*[@class='summary-table']//td[preceding-sibling::td/strong='Property Closing Date:']")
+		# 	print("Property Closing date: {}".format(temp_property_closing_date))
+		# except:
+		# 	temp_property_closing_date = None
+		#
+		# # Purchase Price
+		# try:
+		# 	temp_purchase_price = self.selenium_session.get_single_xpath_text(
+		# 		"//*[@class='summary-table']//td[preceding-sibling::td/strong='Purchase Price:']")
+		# 	print("Purchase Price: {}".format(temp_purchase_price))
+		# except:
+		# 	temp_purchase_price = None
+		#
+		# # Sponsor Co-Investment
+		# try:
+		# 	temp_sponsor_coinvestment = self.selenium_session.get_single_xpath_text(
+		# 		"//*[@class='summary-table']//td[preceding-sibling::td/strong='Sponsor Co-Investment:']")
+		# 	print("Sponsor CoInvestment: {}".format(temp_sponsor_coinvestment))
+		# except:
+		# 	temp_sponsor_coinvestment = None
+		#
+		# # Sponsor Experience
+		# try:
+		# 	temp_sponsor_experience = self.selenium_session.get_single_xpath_text(
+		# 		"//*[contains(@class,'experience-label')]")
+		# 	print("Sponsor Experience: {}".format(temp_sponsor_experience))
+		# except:
+		# 	temp_sponsor_experience
 
 		# =============================
 		# THE INVESTMENT SECTION
@@ -373,7 +333,6 @@ class CrowdStreet:
 		# Distribution Waterfall
 		print('Summary Trying for Distribution Waterfall Table...')
 		try:
-			#TODO: Change this to contains(Distribution Waterfall)
 			# get the title of the Distribution Waterfall
 			distribution_waterfall_title = self.selenium_session.get_single_xpath_text(
 				"//*[translate(text() ,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ' )='DISTRIBUTION WATERFALL']")
@@ -385,29 +344,20 @@ class CrowdStreet:
 				try:
 					# Build array of all the distribution details one by one
 					temp_key = self.selenium_session.get_single_xpath_text(
-						"//*[contains(translate(text() ,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ' ),'DISTRIBUTION WATERFALL')]/parent::tr/following-sibling::tr[" + str(i) + "]/td[1]")
+						"//*[translate(text() ,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ' )='DISTRIBUTION WATERFALL']/parent::tr/following-sibling::tr[" + str(i) + "]/td[1]")
 					temp_waterfall_list.append({temp_key: ''})
-				except:
-					try:
-						# One last try in case the sub-title is in a th tag
-						temp_key = self.selenium_session.get_single_xpath_text(
-							"//*[contains(translate(text() ,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ' ),'DISTRIBUTION WATERFALL')]/parent::tr/following-sibling::tr[" + str(i) + "]/th[1]")
-						temp_waterfall_list.append({temp_key: ''})
-					except:
-						print("breaking out of distribution loop at step {}".format(i))
-						break
-				try:
 					temp_text = self.selenium_session.get_single_xpath_text(
-						"//*[contains(translate(text() ,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ' ),'DISTRIBUTION WATERFALL')]/parent::tr/following-sibling::tr[" + str(i) + "]/td[2]")
+						"//*[translate(text() ,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ' )='DISTRIBUTION WATERFALL']/parent::tr/following-sibling::tr[" + str(i) + "]/td[2]")
 					temp_waterfall_list[len(temp_waterfall_list)-1][temp_key] = temp_text
+					i += 1
 				except:
-					print("No 2nd table element found")
-				i += 1
+					print("breaking out of distribution loop at step {}".format(i))
+					break
 
 			# Convert the list to a string
 			for dict in temp_waterfall_list:
 				for key, value in dict.items():
-					temp_waterfall_str += key + ':' + value + '\n\n'
+					temp_waterfall_str += key + ': ' + value + '\n'
 
 			print(temp_waterfall_str)
 		except:
@@ -425,49 +375,49 @@ class CrowdStreet:
 		try:
 			# Lender
 			temp_lender = self.selenium_session.get_single_xpath_text(
-				"//*[@id='investment-flows']//table[1]//td[preceding-sibling::td[text()='Lender']]")
+				"//*[@id='investment-flows']//td[preceding-sibling::td[text()='Lender']]")
 			print("Lender: {}".format(temp_lender))
 		except:
 			print('Unable to get Lender')
 		try:
 			# Loan Amount
 			temp_loan_amount_ft = self.selenium_session.get_single_xpath_text(
-				"//*[@id='investment-flows']//table[1]//td[preceding-sibling::td[text()='Loan Amount']]")
-			print("Loan Amount: {}".format(temp_loan_amount_ft))
+				"//*[@id='investment-flows']//td[preceding-sibling::td[text()='Loan Amount']]")
+			print("Lender: {}".format(temp_lender))
 		except:
 			print('Unable to get Loan Amount')
 		try:
 			# Interest Rate
 			temp_interest_rate = self.selenium_session.get_single_xpath_text(
-				"//*[@id='investment-flows']//table[1]//td[preceding-sibling::td[text()='Interest Rate']]")
+				"//*[@id='investment-flows']//td[preceding-sibling::td[text()='Interest Rate']]")
 			print("Interest Rate: {}".format(temp_interest_rate))
 		except:
 			print('Unable to get Interest Rate')
 		try:
 			# Term
 			temp_financials_term = self.selenium_session.get_single_xpath_text(
-				"//*[@id='investment-flows']//table[1]//td[preceding-sibling::td[text()='Term']]")
+				"//*[@id='investment-flows']//td[preceding-sibling::td[text()='Term']]")
 			print("Loan Term: {}".format(temp_financials_term))
 		except:
 			print('Unable to get Term')
 		try:
 			# Amortization
 			temp_financials_amortization = self.selenium_session.get_single_xpath_text(
-				"//*[@id='investment-flows']//table[1]//td[preceding-sibling::td[text()='Amortization']]")
+				"//*[@id='investment-flows']//td[preceding-sibling::td[text()='Amortization']]")
 			print("Amortization: {}".format(temp_financials_amortization))
 		except:
 			print('Unable to get Amortization')
 		try:
 			# Guaranties
 			temp_guaranties = self.selenium_session.get_single_xpath_text(
-				"//*[@id='investment-flows']//table[1]//td[preceding-sibling::td[text()='Guaranties']]")
+				"//*[@id='investment-flows']//td[preceding-sibling::td[text()='Guaranties']]")
 			print("Guaranties: {}".format(temp_guaranties))
 		except:
 			print('Unable to get Guaranties')
 		try:
 			# Prepayment Terms
 			temp_prepayment_terms = self.selenium_session.get_single_xpath_text(
-				"//*[@id='investment-flows']//table[1]//td[preceding-sibling::td[text()='Prepayment Terms']]")
+				"//*[@id='investment-flows']//td[preceding-sibling::td[text()='Prepayment Terms']]")
 			print("Prepayment Terms: {}".format(temp_prepayment_terms))
 		except:
 			print('Unable to get Prepayment Terms')
@@ -596,3 +546,4 @@ class CrowdStreet:
 		)
 
 		return deal_obj
+

@@ -159,12 +159,14 @@ class Browse:
 		print("Closing current Tab")
 		self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + 'w')
 
-	def load_page(self, url_extension):
+	def load_page(self, url_extension, use_sleep=True):
 		"""Loading Page"""
 		driver = self.driver
-		time.sleep(randint(5, 10))
+		if use_sleep:
+			time.sleep(randint(5, 10))
 		driver.get(self.base_url + url_extension)
-		time.sleep(randint(8, 15))
+		if use_sleep:
+			time.sleep(randint(8, 15))
 
 	def check_popups_load_page(self, url_extension):
 		"""Loading Page"""

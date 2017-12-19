@@ -98,7 +98,7 @@ class RealtyShares:
 		temp_target_avg_cash_yield = 0.0
 
 		temp_investment_profile = ''
-		temp_min_investment = 0.0
+		temp_min_investment = ''
 		temp_offers_due = None		# datetime.time(0,0,0)
 		temp_funds_due = None		# datetime.time(0,0,0)
 		temp_property_type = ''
@@ -111,6 +111,11 @@ class RealtyShares:
 		temp_price_per_sqft = 0.0
 		temp_sponsor_coinvestment = ''
 		temp_sponsor_experience = ''
+
+		# THE FINANCIAL SUMMARY SECTION ------
+		# DISTRIBUTION STRUCTURE (AKA Distribution Waterfall)
+		temp_waterfall_list = []
+		temp_waterfall_str = ''
 
 		# DEBT DETAILS
 		temp_debt_service_coverage_ratio = 0.0
@@ -203,8 +208,8 @@ class RealtyShares:
 
 		# Minimum Investment
 		try:
-			temp_min_investment =float(self.selenium_session.get_single_xpath_text(
-				"//*[@class='RshStats__statsItem']/div[following-sibling::div[text()='Minimum']]/span[@class='RshStatsFigureNumber']"))*1000
+			temp_min_investment = str(float(self.selenium_session.get_single_xpath_text(
+				"//*[@class='RshStats__statsItem']/div[following-sibling::div[text()='Minimum']]/span[@class='RshStatsFigureNumber']"))*1000)
 			print("Min Investment: {}".format(temp_min_investment))
 		except:
 			temp_min_investment = None
@@ -308,6 +313,55 @@ class RealtyShares:
 
 
 
+		# =============================
+		# THE FINANCIAL SUMMARY SECTION
+		# =============================
+		# Distribution Structure (aka: Distribution Waterfall)
+		print('Summary Trying for Distribution Structure Table...')
+		try:
+			# get the title of the Distribution Waterfall
+			distribution_waterfall_title = self.selenium_session.get_single_xpath_text(
+				"//*[translate(text() ,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ' )='DISTRIBUTION STRUCTURE']")
+			print(distribution_waterfall_title)
+
+			# Figure out what the next line after Distribution is
+			# could say:
+			# Fund Details
+			# Exit Summary
+			# Exit Objectives Summary
+			try:
+				search_text = self.selenium_session.get_single_xpath_text(
+					"//*[translate(text() ,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ' )='FUND DETAILS']")
+			except:
+				print("No FUND DETAILS found")
+			try:
+				search_text = self.selenium_session.get_single_xpath_text(
+					"//*[translate(text() ,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ' )='EXIT SUMMARY']")
+			except:
+				print("No EXIT SUMMARY found")
+			try:
+				search_text = self.selenium_session.get_single_xpath_text(
+					"//*[translate(text() ,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ' )='EXIT OBJECTIVES SUMMARY']")
+			except:
+				print("No EXIT SUMMARY found")
+
+
+			try:
+				temp_texts = self.selenium_session.get_multi_xpath_text(
+					"//*[text()='" + search_text + "']/parent::p/preceding-sibling::node()")
+				temp_waterfall_list = temp_texts
+			except:
+				print("No Distribution Structure elements found")
+
+
+			# Convert the list to a string
+			for item in temp_waterfall_list:
+				temp_waterfall_str += item + '\n\n'
+
+			print(temp_waterfall_str)
+		except:
+			print('Unable to get Distribution Structure')
+
 
 
 		if temp_total_capital_stack > 0:
@@ -339,7 +393,9 @@ class RealtyShares:
 			sponsor_coinvestment=temp_sponsor_coinvestment,
 			sponsor_experience=temp_sponsor_experience,
 			property_images=temp_property_images,
-			percent_funded=temp_percent_funded
+			percent_funded=temp_percent_funded,
+			# Financial Summary
+			temp_waterfall_distribution=temp_waterfall_str
 		)
 
 		return deal_obj
